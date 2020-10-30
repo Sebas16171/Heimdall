@@ -1,34 +1,46 @@
 package UI;
 
-import java.awt.*;
+import Scripts.SQL_Connection;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 
-public class Login {
+public class Login implements ActionListener {
     
-    ImageIcon icon = new ImageIcon("/../Res/black.jpg");
-    JLabel image = new JLabel(icon);
-    JFrame frame = new JFrame("JFrame Example");
-    JPanel panel = new JPanel();
-    JLabel lblPass = new JLabel();
-    JLabel lblUser = new JLabel();
-    JTextField txtUser = new JTextField();
-    JPasswordField txtPass = new JPasswordField();
-    JButton btnLogin = new JButton("Login");
+    private ImageIcon icon = new ImageIcon("/../Res/black.jpg");
+    private JLabel image = new JLabel(icon);
+    private JFrame frame = new JFrame("JFrame Example");
+    private JPanel panel = new JPanel();
+    private JLabel lblPass = new JLabel();
+    private JLabel lblUser = new JLabel();
+    private JTextField txtUser = new JTextField();
+    private JPasswordField txtPass = new JPasswordField();
+    private JButton btnLogin = new JButton("Login");
+    private JButton btnExit = new JButton("Exit");
 
-    public Login() {
+    private SQL_Connection connection;
+    private String server, database;
+
+    public Login(SQL_Connection testCon, String server, String database) {
+
+        this.connection = testCon;
+        this.server = server;
+        this.database = database;
         this.init_components();
 
     }
-    
-    private void init_components(){
-        
+
+    private void init_components() {
+
         panel.setLayout(null);
         frame.add(panel);
 
@@ -38,30 +50,54 @@ public class Login {
         lblUser.setBounds(30, 130, 100, 30);
         txtUser.setText("");
         txtUser.setBounds(30, 160, 245, 40);
-        
+
         lblPass.setText("Passwd");
         lblPass.setBounds(30, 220, 100, 30);
         txtPass.setText("");
         txtPass.setBounds(30, 250, 245, 40);
 
         btnLogin.setBounds(30, 320, 245, 60);
+        btnLogin.addActionListener(this);
+
+        btnExit.setBounds(30, 390, 245, 60);
+        btnExit.addActionListener(this);
 
         panel.add(image);
 
-        panel.add(lblUser);  
+        panel.add(lblUser);
         panel.add(txtUser);
 
-        panel.add(lblPass);  
+        panel.add(lblPass);
         panel.add(txtPass);
-        
-        panel.add(btnLogin);
 
-        frame.setSize(300, 450);
+        panel.add(btnLogin);
+        panel.add(btnExit);
+
+        frame.setSize(320, 500);
         frame.setResizable(false);
-        frame.setLocationRelativeTo(null);  
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
 
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == btnExit) {
+            System.exit(0);
+        } else if (e.getSource() == btnLogin){
+            String username =  txtUser.getText();
+            String passwd = txtPass.getText();
+            if (connection.connect(server, database, username, passwd)) {
+                JOptionPane.showMessageDialog(null, "Connection granted.", "Connection status", 
+                        JOptionPane.INFORMATION_MESSAGE);
+
+            } else {
+                JOptionPane.showMessageDialog(null, "Connection denied.", "Connection status",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        
     }
 
 }
