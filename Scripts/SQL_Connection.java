@@ -6,13 +6,35 @@ public class SQL_Connection {
 
     Connection con = null;
 
-    public void prepare(){
+    public void prepare() throws SQLException {
         String sql_users = "CREATE TABLE IF NOT EXISTS `heimdall`.`users` "
                 + "( `Username` VARCHAR(50) NOT NULL , `Passwd` VARCHAR(100) NOT NULL , PRIMARY KEY (`Username`(50))) ENGINE = InnoDB;";
     
         String sql_data = "CREATE TABLE IF NOT EXISTS `heimdall`.`data` "
                 + "( `id` INT(64) NOT NULL AUTO_INCREMENT , `owner` VARCHAR(128) NOT NULL , `passwd` VARCHAR(156) NOT NULL , `username` "
-                + "VARCHAR(128) NOT NULL , `domain` VARCHAR(128) NOT NULL , `updated` DATE NOT NULL , PRIMARY KEY (`id`), INDEX `username` (`username`)) ENGINE = InnoDB;";
+                + "VARCHAR(128) NOT NULL , `domain` VARCHAR(128) NOT NULL , `updated` DATE NOT NULL , PRIMARY KEY (`id`), INDEX `username` (`owner`)) ENGINE = InnoDB;";
+
+        String sql_connect = "ALTER TABLE `heimdall`.`data` ADD CONSTRAINT `owner` FOREIGN KEY (`owner`) REFERENCES `heimdall`.`users`(`Username`) ON DELETE CASCADE";
+
+        Statement stmt = con.createStatement();
+
+        stmt.executeUpdate(sql_users);
+        stmt.executeUpdate(sql_data);
+        stmt.executeUpdate(sql_connect);
+    }
+
+    public void scan() throws SQLException {
+        Statement stmt = con.createStatement();
+
+        try {
+            ResultSet rs = stmt.executeQuery("SELECT * FROM `data`");
+            while (rs.next())
+                System.out.println(rs.getInt(1) + "  " + rs.getString(2) + "  " + rs.getString(3));
+            con.close();
+        } catch (Exception e) {
+            prepare();
+            scan();
+        }
 
     }
 
@@ -20,8 +42,6 @@ public class SQL_Connection {
         String create_user = String.format("CREATE USER '%s'@'%' IDENTIFIED VIA mysql_native_password USING '***';GRANT SELECT, INSERT, UPDATE, DELETE, FILE ON *.* TO '%s'@'%' "
                 + "REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;", user, user);
     }
-
-
 
     public boolean connect(String server, String database, String username, String passwd){
         try{
@@ -40,5 +60,11 @@ public class SQL_Connection {
             return false;
         }  
 
+    }
+
+    public void close() throws SQLException {
+        if (!con.isClosed()) {
+            con.close();
+        }
     }
 }

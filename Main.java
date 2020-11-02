@@ -16,6 +16,11 @@ class Main {
         m = null;
 
         Login startup = new Login(MainConn, config[0], config[1]);
+
+
+        MainConn.connect(config[0], config[1], "root", "");
+        MainConn.scan();
+        MainConn.close();
     }
 
     private String[] getProperties() throws Exception {
