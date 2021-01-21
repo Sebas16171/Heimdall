@@ -10,20 +10,21 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
+import javax.swing.JRootPane;
 
 public class Login implements ActionListener {
     
     private ImageIcon icon = new ImageIcon("/../Res/black.jpg");
     private JLabel image = new JLabel(icon);
     private JFrame frame = new JFrame("JFrame Example");
-    private JPanel panel = new JPanel();
+    private JRootPane panel = new JRootPane();
     private JLabel lblPass = new JLabel();
     private JLabel lblUser = new JLabel();
     private JTextField txtUser = new JTextField();
     private JPasswordField txtPass = new JPasswordField();
+    private JButton btnRegister = new JButton("Register");
     private JButton btnLogin = new JButton("Login");
     private JButton btnExit = new JButton("Exit");
 
@@ -51,15 +52,18 @@ public class Login implements ActionListener {
         txtUser.setText("");
         txtUser.setBounds(30, 160, 245, 40);
 
-        lblPass.setText("Passwd");
+        lblPass.setText("ID");
         lblPass.setBounds(30, 220, 100, 30);
         txtPass.setText("");
         txtPass.setBounds(30, 250, 245, 40);
 
-        btnLogin.setBounds(30, 320, 245, 60);
+        btnRegister.setBounds(30, 320, 245, 60);
+        btnRegister.addActionListener(this);
+
+        btnLogin.setBounds(30, 390, 245, 60);
         btnLogin.addActionListener(this);
 
-        btnExit.setBounds(30, 390, 245, 60);
+        btnExit.setBounds(30, 460, 245, 60);
         btnExit.addActionListener(this);
 
         panel.add(image);
@@ -70,10 +74,13 @@ public class Login implements ActionListener {
         panel.add(lblPass);
         panel.add(txtPass);
 
+        panel.add(btnRegister);
         panel.add(btnLogin);
         panel.add(btnExit);
+        panel.setDefaultButton(btnLogin);
+        
 
-        frame.setSize(320, 500);
+        frame.setSize(320, 570);
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

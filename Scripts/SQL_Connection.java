@@ -7,20 +7,17 @@ public class SQL_Connection {
     Connection con = null;
 
     public void prepare() throws SQLException {
-        String sql_users = "CREATE TABLE IF NOT EXISTS `heimdall`.`users` "
-                + "( `Username` VARCHAR(50) NOT NULL , `Passwd` VARCHAR(100) NOT NULL , PRIMARY KEY (`Username`(50))) ENGINE = InnoDB;";
-    
-        String sql_data = "CREATE TABLE IF NOT EXISTS `heimdall`.`data` "
-                + "( `id` INT(64) NOT NULL AUTO_INCREMENT , `owner` VARCHAR(128) NOT NULL , `passwd` VARCHAR(156) NOT NULL , `username` "
-                + "VARCHAR(128) NOT NULL , `domain` VARCHAR(128) NOT NULL , `updated` DATE NOT NULL , PRIMARY KEY (`id`), INDEX `username` (`owner`)) ENGINE = InnoDB;";
 
-        String sql_connect = "ALTER TABLE `heimdall`.`data` ADD CONSTRAINT `owner` FOREIGN KEY (`owner`) REFERENCES `heimdall`.`users`(`Username`) ON DELETE CASCADE";
+        String sql_querys[] = {
+            "create database heimdall;",
+            "CREATE TABLE IF NOT EXISTS `heimdall`.`user` ( `id` INT NOT NULL AUTO_INCREMENT , `user` VARCHAR(50) NOT NULL , `name` VARCHAR(50) NOT NULL , `lst_name` VARCHAR(50) NOT NULL , `crpt_method` INT NOT NULL DEFAULT '1' , PRIMARY KEY (`id`)) ENGINE = InnoDB;",
+            "CREATE TABLE `heimdall`.`data` ( `id` INT NOT NULL AUTO_INCREMENT , `owner` INT NOT NULL , `domain` VARCHAR(100) NOT NULL , `username` VARCHAR(100) NOT NULL , `password` VARCHAR(100) NOT NULL , `updated` DATE NOT NULL , PRIMARY KEY (`id`), CONSTRAINT FOREIGN KEY fk_owner (`owner`) REFERENCES user (`id`)) ENGINE = InnoDB"
+        };
 
         Statement stmt = con.createStatement();
 
-        stmt.executeUpdate(sql_users);
-        stmt.executeUpdate(sql_data);
-        stmt.executeUpdate(sql_connect);
+        stmt.executeUpdate(sql_querys[1]);
+        stmt.executeUpdate(sql_querys[2]);
     }
 
     public void scan() throws SQLException {
@@ -36,11 +33,6 @@ public class SQL_Connection {
             scan();
         }
 
-    }
-
-    public void Create_User(String user){
-        String create_user = String.format("CREATE USER '%s'@'%' IDENTIFIED VIA mysql_native_password USING '***';GRANT SELECT, INSERT, UPDATE, DELETE, FILE ON *.* TO '%s'@'%' "
-                + "REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;", user, user);
     }
 
     public boolean connect(String server, String database, String username, String passwd){
@@ -60,6 +52,11 @@ public class SQL_Connection {
             return false;
         }  
 
+    }
+
+    public String retriever_user_data(){
+        String output = "";
+        return output;
     }
 
     public void close() throws SQLException {
