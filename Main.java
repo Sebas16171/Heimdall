@@ -17,10 +17,7 @@ class Main {
         String config[] = m.getProperties();
         m = null;
 
-        System.out.println(Cipher.encrypt(1, "Putisima cola", "Kemamada"));
-        System.out.println(Cipher.decrypt(1, "rBTYnoJraNNdDYgXXIQPYw==", "Kemamada"));
-
-        //Login startup = new Login(MainConn, config[0], config[1]);
+        Login startup = new Login(MainConn, config[0], config[1]);
 
 
         MainConn.connect(config[0], config[1], config[2], config[3]);

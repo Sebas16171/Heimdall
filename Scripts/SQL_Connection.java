@@ -35,6 +35,10 @@ public class SQL_Connection {
 
     }
 
+    public void RegisterUser(String UserName, String Name, String LastName, int Method){
+        String sql = String.format("INSERT INTO `user` (`user`, `name`, `lst_name`, `crpt_method`) VALUES ('%s', '%s', '%s', '%d')", UserName, Name, LastName, Method);
+    }
+
     public boolean connect(String server, String database, String username, String passwd){
         try{
             Class.forName("com.mysql.jdbc.Driver");  

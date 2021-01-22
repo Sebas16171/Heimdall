@@ -1,7 +1,5 @@
 package UI;
 
-import Scripts.SQL_Connection;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -10,9 +8,11 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JRootPane;
+import javax.swing.JTextField;
+
+import Scripts.SQL_Connection;
 
 public class Login implements ActionListener {
     
@@ -79,7 +79,6 @@ public class Login implements ActionListener {
         panel.add(btnExit);
         panel.setDefaultButton(btnLogin);
         
-
         frame.setSize(320, 570);
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
@@ -103,6 +102,8 @@ public class Login implements ActionListener {
                 JOptionPane.showMessageDialog(null, "Connection denied.", "Connection status",
                         JOptionPane.ERROR_MESSAGE);
             }
+        } else if (e.getSource() == btnRegister){
+            Register qReg = new Register();
         }
         
     }

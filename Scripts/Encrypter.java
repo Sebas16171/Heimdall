@@ -60,4 +60,11 @@ public class Encrypter {
         return output;
     }
 
+    public String[] getAlgorithms(){
+        String output[] = {
+            "Base64",
+            "Blowfish"};
+        return output;
+    }
+
 }
