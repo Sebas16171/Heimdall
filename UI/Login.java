@@ -98,12 +98,15 @@ public class Login implements ActionListener {
                 JOptionPane.showMessageDialog(null, "Connection granted.", "Connection status", 
                         JOptionPane.INFORMATION_MESSAGE);
 
+                Main_Window MW = new Main_Window(connection);
+                //System.exit(0);
+
             } else {
                 JOptionPane.showMessageDialog(null, "Connection denied.", "Connection status",
                         JOptionPane.ERROR_MESSAGE);
             }
         } else if (e.getSource() == btnRegister){
-            Register qReg = new Register();
+            Register qReg = new Register(connection);
         }
         
     }

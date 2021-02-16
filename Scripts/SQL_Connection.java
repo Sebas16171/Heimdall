@@ -2,17 +2,17 @@ package Scripts;
 
 import java.sql.*;
 
+import javax.swing.JOptionPane;
+
 public class SQL_Connection {
 
     Connection con = null;
 
     public void prepare() throws SQLException {
 
-        String sql_querys[] = {
-            "create database heimdall;",
-            "CREATE TABLE IF NOT EXISTS `heimdall`.`user` ( `id` INT NOT NULL AUTO_INCREMENT , `user` VARCHAR(50) NOT NULL , `name` VARCHAR(50) NOT NULL , `lst_name` VARCHAR(50) NOT NULL , `crpt_method` INT NOT NULL DEFAULT '1' , PRIMARY KEY (`id`)) ENGINE = InnoDB;",
-            "CREATE TABLE `heimdall`.`data` ( `id` INT NOT NULL AUTO_INCREMENT , `owner` INT NOT NULL , `domain` VARCHAR(100) NOT NULL , `username` VARCHAR(100) NOT NULL , `password` VARCHAR(100) NOT NULL , `updated` DATE NOT NULL , PRIMARY KEY (`id`), CONSTRAINT FOREIGN KEY fk_owner (`owner`) REFERENCES user (`id`)) ENGINE = InnoDB"
-        };
+        String sql_querys[] = { "create database heimdall;",
+                "CREATE TABLE IF NOT EXISTS `heimdall`.`user` ( `id` INT NOT NULL AUTO_INCREMENT , `user` VARCHAR(50) NOT NULL , `name` VARCHAR(50) NOT NULL , `lst_name` VARCHAR(50) NOT NULL , `crpt_method` INT NOT NULL DEFAULT '1' , PRIMARY KEY (`id`)) ENGINE = InnoDB;",
+                "CREATE TABLE `heimdall`.`data` ( `id` INT NOT NULL AUTO_INCREMENT , `owner` INT NOT NULL , `domain` VARCHAR(100) NOT NULL , `username` VARCHAR(100) NOT NULL , `password` VARCHAR(100) NOT NULL , `updated` DATE NOT NULL , PRIMARY KEY (`id`), CONSTRAINT FOREIGN KEY fk_owner (`owner`) REFERENCES user (`id`)) ENGINE = InnoDB" };
 
         Statement stmt = con.createStatement();
 
@@ -35,27 +35,58 @@ public class SQL_Connection {
 
     }
 
-    public void RegisterUser(String UserName, String Name, String LastName, int Method){
-        String sql = String.format("INSERT INTO `user` (`user`, `name`, `lst_name`, `crpt_method`) VALUES ('%s', '%s', '%s', '%d')", UserName, Name, LastName, Method);
+    public void RegisterUser(String UserName, String Name, String LastName, int Method) {
+
+        connect("localhost", "heimdall", "root", "");
+
+        String sql = String.format(
+                "INSERT INTO `user` (`user`, `name`, `lst_name`, `crpt_method`) VALUES ('%s', '%s', '%s', '%d')",
+                UserName, Name, LastName, Method);
+
+        JOptionPane.showMessageDialog(null, sql, "Connection status", JOptionPane.ERROR_MESSAGE);
+
+        Statement stmt;
+        try {
+            stmt = con.createStatement();
+            stmt.executeUpdate(sql);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e, "Connection status", JOptionPane.ERROR_MESSAGE);
+        }
+
+        
     }
 
-    public boolean connect(String server, String database, String username, String passwd){
-        try{
-            Class.forName("com.mysql.jdbc.Driver");  
+    public boolean connect(String server, String database, String username, String passwd) {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection(String.format("jdbc:mysql://%s/%s", server, database), username, passwd);
-            
-            /*Statement stmt=con.createStatement();  
-            ResultSet rs=stmt.executeQuery("SELECT * FROM `data`");  
-            
-            while(rs.next())
-                System.out.println(rs.getInt(1)+"  "+rs.getString(2)+"  "+rs.getString(3));  
-                con.close();*/
-            return true;
-        }catch(Exception e){
-            //System.out.println(e);
-            return false;
-        }  
 
+            /*
+             * Statement stmt=con.createStatement(); ResultSet
+             * rs=stmt.executeQuery("SELECT * FROM `data`");
+             * 
+             * while(rs.next())
+             * System.out.println(rs.getInt(1)+"  "+rs.getString(2)+"  "+rs.getString(3));
+             * con.close();
+             */
+            return true;
+        } catch (Exception e) {
+            // System.out.println(e);
+            return false;
+        }
+
+    }
+
+    public ResultSet select(String sql) {
+        Statement stmt;
+        ResultSet rs = null;
+        try {
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rs;
     }
 
     public String retriever_user_data(){

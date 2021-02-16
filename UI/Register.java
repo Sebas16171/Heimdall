@@ -7,8 +7,11 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JRootPane;
 import javax.swing.JTextField;
+
+import Scripts.SQL_Connection;
 
 public class Register implements ActionListener {
     
@@ -28,7 +31,12 @@ public class Register implements ActionListener {
     private JButton btnAccept = new JButton("Accept");
     private JButton btnCancel = new JButton("Cancel");
 
-    public Register(){
+    private SQL_Connection connection;
+
+    public Register(SQL_Connection connection){
+
+        this.connection = connection;
+
         init_components();
     }
 
@@ -90,6 +98,14 @@ public class Register implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnAccept) {
             // TODO Auto-generated method stub
+
+            String user = txtUser.getText();
+            String name = txtName.getText();
+            String last_name = txtLstName.getText();
+            int crypt_method = cmbCrptMethod.getSelectedIndex();
+
+            connection.RegisterUser(user, name, last_name, crypt_method);
+
         } else if (e.getSource() == btnCancel){
             frame.dispose();
         }
