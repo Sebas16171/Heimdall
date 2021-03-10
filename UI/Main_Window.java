@@ -92,6 +92,8 @@ public class Main_Window {
             e.printStackTrace();
         }*/
 
+        
+
         table.setModel(model_user);
     }
 }

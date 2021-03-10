@@ -97,7 +97,6 @@ public class Register implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnAccept) {
-            // TODO Auto-generated method stub
 
             String user = txtUser.getText();
             String name = txtName.getText();
