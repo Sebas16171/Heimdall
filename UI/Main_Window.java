@@ -3,6 +3,7 @@ package UI;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JRootPane;
 import javax.swing.JTable;
@@ -11,6 +12,7 @@ import javax.swing.table.DefaultTableModel;
 import com.mysql.jdbc.Statement;
 
 import Scripts.SQL_Connection;
+import Scripts.Session;
 
 public class Main_Window {
 
@@ -19,13 +21,16 @@ public class Main_Window {
     private DefaultTableModel model = new DefaultTableModel();
     private DefaultTableModel model_user = new DefaultTableModel();
     private JTable table = new JTable();
+    private JButton btnAdd = new JButton("Add new");
 
     private SQL_Connection connection;
+    private Session session;
     private Statement st;
 
-    public Main_Window(SQL_Connection connection) {
+    public Main_Window(SQL_Connection connection, Session session) {
 
         this.connection = connection;
+        this.session = session;
 
         init_components();
 
@@ -36,6 +41,9 @@ public class Main_Window {
         panel.setLayout(null);
         frame.add(panel);
 
+        btnAdd.setBounds(550, 30, 150, 40);
+
+        panel.add(btnAdd);
         panel.add(table);
         table.setBounds(20, 20, 500, 420);
         update_table();

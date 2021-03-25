@@ -2,6 +2,8 @@ package UI;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -13,6 +15,7 @@ import javax.swing.JRootPane;
 import javax.swing.JTextField;
 
 import Scripts.SQL_Connection;
+import Scripts.Session;
 
 public class Login implements ActionListener {
     
@@ -23,13 +26,14 @@ public class Login implements ActionListener {
     private JLabel lblPass = new JLabel();
     private JLabel lblUser = new JLabel();
     private JTextField txtUser = new JTextField();
-    private JPasswordField txtPass = new JPasswordField();
+    private JTextField txtPass = new JTextField();
     private JButton btnRegister = new JButton("Register");
     private JButton btnLogin = new JButton("Login");
     private JButton btnExit = new JButton("Exit");
 
     private SQL_Connection connection;
     private String server, database;
+    private Session Session;
 
     public Login(SQL_Connection testCon, String server, String database) {
 
@@ -87,24 +91,51 @@ public class Login implements ActionListener {
 
     }
 
+    public boolean Auth(String User, int ID){
+
+        connection.connect(server, database, "root", "");
+
+        try {
+            ResultSet userdata = connection.select("SELECT * FROM `user` WHERE `user` = '" + User + "' && `id` = " + ID + ";");
+            userdata.next();
+            int id = Integer.parseInt(userdata.getString("id"));
+            String username = userdata.getString("user");
+            String name = userdata.getString("name");
+            String last_name = userdata.getString("lst_name");
+            int crpt_method = Integer.parseInt(userdata.getString("crpt_method"));
+
+            Session = new Session(id, username, name, last_name, crpt_method);
+
+            return true;
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, "User not found.", "Connection status", JOptionPane.ERROR_MESSAGE);
+            //e.printStackTrace();
+            return false;
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnExit) {
             System.exit(0);
         } else if (e.getSource() == btnLogin){
             String username =  txtUser.getText();
-            String passwd = txtPass.getText();
-            if (connection.connect(server, database, username, passwd)) {
+            int ID = Integer.parseInt(txtPass.getText());
+
+            if (Auth(username, ID)) {
+                Main_Window MW = new Main_Window(connection, Session);
+            }
+
+            /*if (connection.connect(server, database, username, passwd)) {
                 JOptionPane.showMessageDialog(null, "Connection granted.", "Connection status", 
                         JOptionPane.INFORMATION_MESSAGE);
-
-                Main_Window MW = new Main_Window(connection);
-                //System.exit(0);
 
             } else {
                 JOptionPane.showMessageDialog(null, "Connection denied.", "Connection status",
                         JOptionPane.ERROR_MESSAGE);
-            }
+            }*/
+
         } else if (e.getSource() == btnRegister){
             Register qReg = new Register(connection);
         }
