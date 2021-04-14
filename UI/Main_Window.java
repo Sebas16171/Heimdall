@@ -3,6 +3,8 @@ package UI;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JRootPane;
@@ -14,7 +16,7 @@ import com.mysql.jdbc.Statement;
 import Scripts.SQL_Connection;
 import Scripts.Session;
 
-public class Main_Window {
+public class Main_Window implements ActionListener {
 
     private JFrame frame = new JFrame("JFrame Example");
     private JRootPane panel = new JRootPane();
@@ -38,10 +40,17 @@ public class Main_Window {
 
     public void init_components() {
 
+        System.out.println("Session ID: " + this.session.getID());
+        System.out.println("Session Name: " + this.session.getName());
+        System.out.println("Session Last name: " + this.session.getLastName());
+        System.out.println("Session Username: " + this.session.getUsername());
+        System.out.println("Session CryptMethod: " + this.session.getCryptMethod());
+
         panel.setLayout(null);
         frame.add(panel);
 
         btnAdd.setBounds(550, 30, 150, 40);
+        btnAdd.addActionListener(this);
 
         panel.add(btnAdd);
         panel.add(table);
@@ -103,5 +112,14 @@ public class Main_Window {
         
 
         table.setModel(model_user);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == btnAdd) {
+            Add_passwd add_pass = new Add_passwd(this.connection, this.session);
+            
+        }
+
     }
 }

@@ -56,6 +56,17 @@ public class SQL_Connection {
         
     }
 
+    public void Register(String sql){
+        connect("localhost", "heimdall", "root", "");
+        Statement stmt;
+        try {
+            stmt = con.createStatement();
+            stmt.executeUpdate(sql);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e, "Connection status", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     public boolean connect(String server, String database, String username, String passwd) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
