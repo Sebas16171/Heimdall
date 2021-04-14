@@ -13,6 +13,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JRootPane;
 import javax.swing.JTextField;
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 
 import Scripts.SQL_Connection;
 import Scripts.Session;
@@ -105,6 +107,15 @@ public class Login implements ActionListener {
             int crpt_method = Integer.parseInt(userdata.getString("crpt_method"));
 
             Session = new Session(id, username, name, last_name, crpt_method);
+
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+            LocalDateTime now = LocalDateTime.now();
+
+            String date = dtf.format(now);
+
+            String sql = String.format("INSERT INTO `logins` (`user`, `user_id`, `date`) VALUES ('%s', '%d', '%s')", username, id, date );
+
+            connection.Register(sql);
 
             return true;
         } catch (Exception e) {

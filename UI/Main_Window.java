@@ -51,12 +51,6 @@ public class Main_Window implements ActionListener {
 
     public void init_components() {
 
-        System.out.println("Session ID: " + this.session.getID());
-        System.out.println("Session Name: " + this.session.getName());
-        System.out.println("Session Last name: " + this.session.getLastName());
-        System.out.println("Session Username: " + this.session.getUsername());
-        System.out.println("Session CryptMethod: " + this.session.getCryptMethod());
-
         panel.setLayout(null);
         frame.add(panel);
 
@@ -195,7 +189,13 @@ public class Main_Window implements ActionListener {
             } else {
                 String sql = "DELETE FROM `data` WHERE `id` = " + selected_row[0];
 
-                System.out.println(sql);
+                //System.out.println(sql);
+
+                int dialogResult = JOptionPane.showConfirmDialog(null,
+                        "Would You Like to Save your Previous Note First?", "Warning", JOptionPane.YES_NO_OPTION);
+                if (dialogResult == JOptionPane.YES_OPTION) {
+                    connection.Register(sql);
+                }
             }
             
         }
