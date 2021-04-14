@@ -2,11 +2,15 @@ package UI;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JRootPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -15,6 +19,7 @@ import com.mysql.jdbc.Statement;
 
 import Scripts.SQL_Connection;
 import Scripts.Session;
+import Scripts.Encrypter;
 
 public class Main_Window implements ActionListener {
 
@@ -28,11 +33,13 @@ public class Main_Window implements ActionListener {
     private SQL_Connection connection;
     private Session session;
     private Statement st;
+    private Encrypter crpt;
 
     public Main_Window(SQL_Connection connection, Session session) {
 
         this.connection = connection;
         this.session = session;
+        this.crpt = new Encrypter();
 
         init_components();
 
@@ -55,6 +62,49 @@ public class Main_Window implements ActionListener {
         panel.add(btnAdd);
         panel.add(table);
         table.setBounds(20, 20, 500, 420);
+        table.addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseClicked(MouseEvent arg0) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent arg0) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void mouseExited(MouseEvent arg0) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void mousePressed(MouseEvent arg0) {
+                // TODO Auto-generated method stub
+
+                JTable temp_table = (JTable) arg0.getSource();
+                Point point = arg0.getPoint();
+                int row = table.rowAtPoint(point);
+                if (arg0.getClickCount() == 2 && temp_table.getSelectedRow() != -1) {
+                    // your valueChanged overridden method
+                    String str = crpt.decrypt(session.getCryptMethod(), String.valueOf(
+                        temp_table.getValueAt(row, 3)), session.getName() + session.getLastName());
+                    JOptionPane.showMessageDialog(null, str);
+
+                }
+                
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent arg0) {
+                // TODO Auto-generated method stub
+                
+            }
+        });
         update_table();
 
         frame.setSize(750, 500);
@@ -67,7 +117,7 @@ public class Main_Window implements ActionListener {
     }
 
     public void update_table() {
-        ResultSet data = connection.select("SELECT * FROM data");
+        ResultSet data = connection.select("SELECT * FROM `data` WHERE `owner` = " + this.session.getID());
         ResultSet data_user = connection.select("SELECT * FROM user");
 
         model = new DefaultTableModel();
@@ -97,21 +147,22 @@ public class Main_Window implements ActionListener {
             e.printStackTrace();
         }
 
-        /*try {
+        try {
             while (data.next()) {
                 String owner = data.getString("owner");
                 String domain = data.getString("domain");
                 String username = data.getString("username");
                 String password = data.getString("password");
-                model.addRow(new Object[] { owner, domain, username,password });
+                String updated = data.getString("updated");
+                model.addRow(new Object[] { owner, domain, username,password,updated });
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }*/
+        }
 
         
 
-        table.setModel(model_user);
+        table.setModel(model);
     }
 
     @Override

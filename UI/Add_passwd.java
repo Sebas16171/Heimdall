@@ -118,9 +118,13 @@ public class Add_passwd implements ActionListener {
                 String sql = String.format(
                         "INSERT INTO `data` (`owner`, `domain`, `username`, `password`, `updated`) VALUES ('%d', '%s', '%s', '%s', '%s')",
                         this.session.getID(), this.txtDomain.getText(), this.txtUsername.getText(), passwd, date);
-
-                System.out.println(sql);
                 connection.Register(sql);
+
+                sql = String.format(
+                        "INSERT INTO `log` (`fecha`, `usuario`) VALUES ('%s', '%s')", date, this.session.getUsername());
+                connection.Register(sql);
+
+
                 JOptionPane.showMessageDialog(null, "Se agrego exitosamente");
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(null, ex, "Error", JOptionPane.ERROR_MESSAGE);
