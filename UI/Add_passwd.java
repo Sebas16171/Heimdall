@@ -36,6 +36,7 @@ public class Add_passwd implements ActionListener {
     private SQL_Connection connection;
     private Session session;
     private Encrypter crpt;
+    private String id;
 
     public Add_passwd(SQL_Connection connection, Session session){
         /* DATOS A RECOGER
@@ -54,6 +55,29 @@ public class Add_passwd implements ActionListener {
         this.connection = connection;
         this.session = session;
         this.crpt = new Encrypter();
+        this.id = "";
+
+        init_components();
+    }
+
+    public Add_passwd(SQL_Connection connection, Session session, String id){
+        /* DATOS A RECOGER
+
+            id: Viene en Session
+            owner: Viene en Session
+            domain: Lo escribe el usuario
+            username: Lo escribe el usuario
+            password: Lo escribe el usuario
+                Debe encriptarse: El metodo viene en Session
+            updated: se recoge del sistema
+
+        
+        */
+
+        this.connection = connection;
+        this.session = session;
+        this.crpt = new Encrypter();
+        this.id = id;
 
         init_components();
     }
@@ -115,17 +139,37 @@ public class Add_passwd implements ActionListener {
                 passwd = this.crpt.encrypt(this.session.getCryptMethod(), this.txtPassword.getText(),
                         this.session.getName() + this.session.getLastName());
 
-                String sql = String.format(
+                if (this.id == ""){
+                    String sql = String.format(
                         "INSERT INTO `data` (`owner`, `domain`, `username`, `password`, `updated`) VALUES ('%d', '%s', '%s', '%s', '%s')",
                         this.session.getID(), this.txtDomain.getText(), this.txtUsername.getText(), passwd, date);
-                connection.Register(sql);
-
-                sql = String.format(
+                    connection.Register(sql);
+                            
+                    sql = String.format(
                         "INSERT INTO `log` (`fecha`, `usuario`) VALUES ('%s', '%s')", date, this.session.getUsername());
-                connection.Register(sql);
+                        connection.Register(sql);
+                    JOptionPane.showMessageDialog(null, "Se agrego exitosamente");
+                } else {
+                    String sql = "UPDATE `data` SET";
+
+                    if (!this.txtDomain.getText().equals("")){
+                        sql += " `domain`='" + this.txtDomain.getText() + "',";
+                    }
+                    if (!this.txtUsername.getText().equals("")){
+                        sql += " `username`='" + this.txtUsername.getText() + "',";
+                    }
+                    if (!this.txtPassword.getText().equals("")){
+                        sql += " `password`='" + this.txtPassword.getText() + "',";
+                    }
+
+                    sql += "`updated`='" + date + "' WHERE `id` = " + this.id;
+
+                    //System.out.println(sql);
+                    connection.Register(sql);
+                                
+                }
 
 
-                JOptionPane.showMessageDialog(null, "Se agrego exitosamente");
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(null, ex, "Error", JOptionPane.ERROR_MESSAGE);
             }

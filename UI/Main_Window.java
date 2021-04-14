@@ -29,11 +29,15 @@ public class Main_Window implements ActionListener {
     private DefaultTableModel model_user = new DefaultTableModel();
     private JTable table = new JTable();
     private JButton btnAdd = new JButton("Add new");
+    private JButton btnRemove = new JButton("Remove");
+    private JButton btnEdit = new JButton("Edit");
 
     private SQL_Connection connection;
     private Session session;
     private Statement st;
     private Encrypter crpt;
+
+    private String[] selected_row = {"", "", "", "", ""};
 
     public Main_Window(SQL_Connection connection, Session session) {
 
@@ -59,7 +63,15 @@ public class Main_Window implements ActionListener {
         btnAdd.setBounds(550, 30, 150, 40);
         btnAdd.addActionListener(this);
 
+        btnRemove.setBounds(550, 100, 150, 40);
+        btnRemove.addActionListener(this);
+
+        btnEdit.setBounds(550, 170, 150, 40);
+        btnEdit.addActionListener(this);
+
         panel.add(btnAdd);
+        panel.add(btnRemove);
+        panel.add(btnEdit);
         panel.add(table);
         table.setBounds(20, 20, 500, 420);
         table.addMouseListener(new MouseListener() {
@@ -89,11 +101,17 @@ public class Main_Window implements ActionListener {
                 JTable temp_table = (JTable) arg0.getSource();
                 Point point = arg0.getPoint();
                 int row = table.rowAtPoint(point);
+
                 if (arg0.getClickCount() == 2 && temp_table.getSelectedRow() != -1) {
                     // your valueChanged overridden method
                     String str = crpt.decrypt(session.getCryptMethod(), String.valueOf(
                         temp_table.getValueAt(row, 3)), session.getName() + session.getLastName());
                     JOptionPane.showMessageDialog(null, str);
+
+                } else {
+                    for (int i = 0; i < 5; i++) {
+                        selected_row[i] = String.valueOf(temp_table.getValueAt(row, i));
+                    }
 
                 }
                 
@@ -170,6 +188,20 @@ public class Main_Window implements ActionListener {
         if (e.getSource() == btnAdd) {
             Add_passwd add_pass = new Add_passwd(this.connection, this.session);
             
+        }
+        if (e.getSource() == btnRemove) {
+            if (this.selected_row[0] == ""){
+                JOptionPane.showMessageDialog(null, "Ninguna fila seleccionada", "Error al eliminar", JOptionPane.ERROR_MESSAGE);
+            } else {
+                String sql = "DELETE FROM `data` WHERE `id` = " + selected_row[0];
+
+                System.out.println(sql);
+            }
+            
+        }
+        if (e.getSource() == btnEdit) {
+            Add_passwd edit_pass = new Add_passwd(this.connection, this.session, selected_row[0]);
+
         }
 
     }
